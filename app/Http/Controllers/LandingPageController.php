@@ -20,7 +20,6 @@ class LandingPageController extends Controller
         $profile = Profile::first();
         $portfolios = Portfolio::latest()->take(6)->get();
         $blogs = Blog::latest()->take(6)->get();
-        $socialMedia = SocialMedia::all();
 
         return view('welcome', compact('profile', 'portfolios', 'blogs', 'socialMedia'));
     }
