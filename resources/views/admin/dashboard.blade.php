@@ -48,13 +48,6 @@
         <div class="bg-purple-500 p-4">
             <i class="fas fa-share-alt text-white text-3xl"></i>
         </div>
-        <div class="p-4">
-            <h3 class="font-bold text-lg mb-2">Social Media</h3>
-            <p class="text-gray-600 mb-4">Connect your social platforms</p>
-            <a href="{{ route('admin.social-media.index') }}" class="text-purple-500 hover:text-purple-700 font-medium">
-                Manage <i class="fas fa-arrow-right ml-1"></i>
-            </a>
-        </div>
     </div>
 </div>
 
@@ -81,18 +74,6 @@
                 <div>
                     <p class="text-gray-500">Blog Posts</p>
                     <p class="text-2xl font-bold">{{ \App\Models\Blog::count() }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="border rounded-lg p-4">
-            <div class="flex items-center">
-                <div class="rounded-full bg-purple-100 p-3 mr-4">
-                    <i class="fas fa-share-alt text-purple-500"></i>
-                </div>
-                <div>
-                    <p class="text-gray-500">Social Links</p>
-                    <p class="text-2xl font-bold">{{ \App\Models\SocialMedia::count() }}</p>
                 </div>
             </div>
         </div>
