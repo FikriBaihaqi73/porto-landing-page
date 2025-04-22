@@ -29,7 +29,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if($blog->image)
-                                        <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="h-16 w-16 object-cover rounded">
+                                        <img src="{{ $blog->image }}" alt="{{ $blog->title }}" class="h-16 w-16 object-cover rounded">
                                     @else
                                         <div class="h-16 w-16 bg-gray-200 rounded flex items-center justify-center">
                                             <i class="fas fa-image text-gray-400"></i>

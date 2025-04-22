@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 
 class ProfileController extends Controller
 {
@@ -44,26 +46,49 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
-        // Check if profile already exists
-        if (Profile::count() > 0) {
-            return redirect()->route('profile.index')
-                ->with('error', 'Profile already exists. You can only edit the existing profile.');
-        }
-
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'cv_link' => 'nullable|url',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cv_link' => 'required|url',
+            'skills' => 'nullable|array',
+            'skills.*' => 'string|max:100',
         ]);
 
         $profile = new Profile();
-        $profile->name = $request->name;
-        $profile->description = $request->description;
-        $profile->cv_link = $request->cv_link;
+        $profile->name = $validated['name'];
+        $profile->description = $validated['description'];
+        $profile->cv_link = $validated['cv_link'];
+        $profile->skills = $validated['skills'] ?? [];
 
+        // Upload photo to Cloudinary
         if ($request->hasFile('photo')) {
-            $profile->photo = $request->file('photo')->store('profile', 'public');
+            try {
+                // Configure Cloudinary directly
+                $config = new Configuration();
+                $config->cloud->cloudName = env('CLOUDINARY_CLOUD_NAME');
+                $config->cloud->apiKey = env('CLOUDINARY_API_KEY');
+                $config->cloud->apiSecret = env('CLOUDINARY_API_SECRET');
+                $config->url->secure = true;
+
+                $cloudinary = new Cloudinary($config);
+
+                // Get the file path
+                $imagePath = $request->file('photo')->getRealPath();
+
+                // Upload to cloudinary
+                $uploadResult = $cloudinary->uploadApi()->upload($imagePath, [
+                    'folder' => 'profile'
+                ]);
+
+                // Store the secure URL
+                $profile->photo = $uploadResult['secure_url'];
+
+            } catch (\Exception $e) {
+                return redirect()->back()
+                    ->with('error', 'Photo upload failed: ' . $e->getMessage())
+                    ->withInput();
+            }
         }
 
         $profile->save();
@@ -73,7 +98,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Show the form for editing the profile.
+     * Show the form for editing the specified profile.
      *
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\View\View
@@ -92,24 +117,48 @@ class ProfileController extends Controller
      */
     public function update(Request $request, Profile $profile)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'cv_link' => 'nullable|url',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Make photo optional during update
+            'cv_link' => 'required|url',
+            'skills' => 'nullable|array',
+            'skills.*' => 'string|max:100',
         ]);
 
-        $profile->name = $request->name;
-        $profile->description = $request->description;
-        $profile->cv_link = $request->cv_link;
+        $profile->name = $validated['name'];
+        $profile->description = $validated['description'];
+        $profile->cv_link = $validated['cv_link'];
+        $profile->skills = $validated['skills'] ?? [];
 
+        // Upload new photo to Cloudinary if provided
         if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($profile->photo) {
-                Storage::disk('public')->delete($profile->photo);
-            }
+            try {
+                // Configure Cloudinary directly
+                $config = new Configuration();
+                $config->cloud->cloudName = env('CLOUDINARY_CLOUD_NAME');
+                $config->cloud->apiKey = env('CLOUDINARY_API_KEY');
+                $config->cloud->apiSecret = env('CLOUDINARY_API_SECRET');
+                $config->url->secure = true;
 
-            $profile->photo = $request->file('photo')->store('profile', 'public');
+                $cloudinary = new Cloudinary($config);
+
+                // Get the file path
+                $imagePath = $request->file('photo')->getRealPath();
+
+                // Upload to cloudinary
+                $uploadResult = $cloudinary->uploadApi()->upload($imagePath, [
+                    'folder' => 'profile'
+                ]);
+
+                // Store the secure URL
+                $profile->photo = $uploadResult['secure_url'];
+
+            } catch (\Exception $e) {
+                return redirect()->back()
+                    ->with('error', 'Photo upload failed: ' . $e->getMessage())
+                    ->withInput();
+            }
         }
 
         $profile->save();
@@ -126,10 +175,8 @@ class ProfileController extends Controller
      */
     public function destroy(Profile $profile)
     {
-        // Delete photo if exists
-        if ($profile->photo) {
-            Storage::disk('public')->delete($profile->photo);
-        }
+        // Note: If you want to delete the image from Cloudinary, you would need to
+        // extract the public_id from the URL and use Cloudinary::destroy($publicId)
 
         $profile->delete();
 

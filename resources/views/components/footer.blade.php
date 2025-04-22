@@ -1,18 +1,17 @@
-<footer class="bg-white dark:bg-gray-800 shadow-inner py-8 transition-colors duration-300">
+<footer class="bg-white dark:bg-gray-900 py-12 border-t border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-            <div class="mb-6 md:mb-0">
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Muhammad Fikri Baihaqi</h2>
-                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">© {{ date('Y') }} All rights reserved.</p>
+        <div class="flex flex-col items-center">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Muhammad Fikri Baihaqi</h2>
             </div>
 
-            <div class="flex space-x-6">
-                @foreach(App\Models\SocialMedia::all() as $social)
-                <a href="{{ $social->link }}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
-                    <span class="sr-only">{{ $social->platform }}</span>
-                    <i class="{{ $social->icon }} text-xl"></i>
-                </a>
-                @endforeach
+            <!-- Social Media Links -->
+            <div class="mb-8">
+                @include('components.social-media', ['socialMedia' => $socialMedia ?? []])
+            </div>
+
+            <div class="text-center text-gray-500 dark:text-gray-400">
+                <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
             </div>
         </div>
     </div>

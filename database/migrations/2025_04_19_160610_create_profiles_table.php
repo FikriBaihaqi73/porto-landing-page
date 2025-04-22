@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->text('description');
             $table->string('cv_link');
+            $table->json('skills')->nullable(); // Added skills column as JSON
             $table->timestamps();
         });
     }

@@ -6,7 +6,8 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-md overflow-hidden">
     <div class="p-6">
-        <form action="{{ route('admin.blog.update', $blog) }}" method="POST" enctype="multipart/form-data">
+        <!-- In your form tag -->
+        <form method="POST" action="{{ route('admin.blog.update', $blog) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -20,24 +21,33 @@
 
             <div class="mb-6">
                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Post Content</label>
-                <textarea name="content" id="content" rows="12" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>{{ old('content', $blog->content) }}</textarea>
+                <textarea
+                    name="content"
+                    id="content"
+                    rows="12"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 font-sans text-base leading-relaxed whitespace-pre-wrap"
+                    style="min-height: 400px; line-height: 1.8;"
+                    placeholder="Tulis konten blog Anda di sini...&#10;&#10;Tips format:&#10;- Gunakan baris baru (Enter) untuk membuat paragraf baru&#10;- Spasi dan format teks akan dipertahankan&#10;- Tulis dengan rapi untuk tampilan yang lebih baik"
+                    required>{{ old('content', $blog->content) }}</textarea>
+                <p class="mt-2 text-sm text-gray-500">
+                    * Tekan Enter dua kali untuk membuat paragraf baru
+                    * Format teks dan spasi akan ditampilkan sesuai dengan yang Anda ketik
+                    * Gunakan spasi dan baris baru untuk membuat konten lebih mudah dibaca
+                </p>
                 @error('content')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="mb-6">
-                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
-
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
                 @if($blog->image)
-                <div class="mb-3">
-                    <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="h-32 w-auto object-cover rounded">
-                    <p class="mt-1 text-sm text-gray-500">Current image</p>
-                </div>
+                    <div class="mb-2">
+                        <img src="{{ $blog->image }}" alt="{{ $blog->title }}" class="h-32 w-auto object-cover rounded">
+                    </div>
                 @endif
-
-                <input type="file" name="image" id="image" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                <p class="mt-1 text-sm text-gray-500">Leave empty to keep the current image. Recommended size: 1200x630px. Maximum size: 2MB.</p>
+                <input type="file" name="image" id="image" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <p class="mt-1 text-sm text-gray-500">Enter a valid image URL (e.g., https://example.com/image.jpg)</p>
                 @error('image')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

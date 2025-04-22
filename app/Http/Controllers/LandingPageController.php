@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\Portfolio;
 use App\Models\Profile;
-use App\Models\SocialMedia;
 use Illuminate\Http\Request;
+use App\Models\SocialMedia;
 
 class LandingPageController extends Controller
 {
@@ -18,8 +18,9 @@ class LandingPageController extends Controller
     public function index()
     {
         $profile = Profile::first();
-        $portfolios = Portfolio::latest()->take(6)->get();
-        $blogs = Blog::latest()->take(6)->get();
+        $portfolios = Portfolio::latest()->take(3)->get();
+        $blogs = Blog::latest()->take(3)->get();
+        $socialMedia = SocialMedia::where('is_active', true)->get();
 
         return view('welcome', compact('profile', 'portfolios', 'blogs', 'socialMedia'));
     }
@@ -55,4 +56,16 @@ class LandingPageController extends Controller
 
         return view('blog.show', compact('blog', 'relatedBlogs'));
     }
+
+    public function portfolioIndex()
+{
+    $portfolios = Portfolio::latest()->paginate(9);
+    return view('portfolio.index', compact('portfolios'));
+}
+
+public function blogIndex()
+{
+    $blogs = Blog::latest()->paginate(9);
+    return view('blog.index', compact('blogs'));
+}
 }

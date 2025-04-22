@@ -7,6 +7,8 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 
 class BlogController extends Controller
 {
@@ -49,8 +51,34 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->content = $request->content;
 
+        // Upload image to Cloudinary if provided
         if ($request->hasFile('image')) {
-            $blog->image = $request->file('image')->store('blogs', 'public');
+            try {
+                // Configure Cloudinary directly
+                $config = new Configuration();
+                $config->cloud->cloudName = env('CLOUDINARY_CLOUD_NAME');
+                $config->cloud->apiKey = env('CLOUDINARY_API_KEY');
+                $config->cloud->apiSecret = env('CLOUDINARY_API_SECRET');
+                $config->url->secure = true;
+
+                $cloudinary = new Cloudinary($config);
+
+                // Get the file path
+                $imagePath = $request->file('image')->getRealPath();
+
+                // Upload to cloudinary
+                $uploadResult = $cloudinary->uploadApi()->upload($imagePath, [
+                    'folder' => 'blog'
+                ]);
+
+                // Store the secure URL
+                $blog->image = $uploadResult['secure_url'];
+
+            } catch (\Exception $e) {
+                return redirect()->back()
+                    ->with('error', 'Image upload failed: ' . $e->getMessage())
+                    ->withInput();
+            }
         }
 
         $blog->save();
@@ -99,13 +127,34 @@ class BlogController extends Controller
         $blog->title = $request->title;
         $blog->content = $request->content;
 
+        // Upload new image to Cloudinary if provided
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($blog->image) {
-                Storage::disk('public')->delete($blog->image);
-            }
+            try {
+                // Configure Cloudinary directly
+                $config = new Configuration();
+                $config->cloud->cloudName = env('CLOUDINARY_CLOUD_NAME');
+                $config->cloud->apiKey = env('CLOUDINARY_API_KEY');
+                $config->cloud->apiSecret = env('CLOUDINARY_API_SECRET');
+                $config->url->secure = true;
 
-            $blog->image = $request->file('image')->store('blogs', 'public');
+                $cloudinary = new Cloudinary($config);
+
+                // Get the file path
+                $imagePath = $request->file('image')->getRealPath();
+
+                // Upload to cloudinary
+                $uploadResult = $cloudinary->uploadApi()->upload($imagePath, [
+                    'folder' => 'blog'
+                ]);
+
+                // Store the secure URL
+                $blog->image = $uploadResult['secure_url'];
+
+            } catch (\Exception $e) {
+                return redirect()->back()
+                    ->with('error', 'Image upload failed: ' . $e->getMessage())
+                    ->withInput();
+            }
         }
 
         $blog->save();
@@ -122,10 +171,8 @@ class BlogController extends Controller
      */
     public function destroy(Blog $blog)
     {
-        // Delete image if exists
-        if ($blog->image) {
-            Storage::disk('public')->delete($blog->image);
-        }
+        // Note: If you want to delete the image from Cloudinary, you would need to
+        // extract the public_id from the URL and use Cloudinary::destroy($publicId)
 
         $blog->delete();
 

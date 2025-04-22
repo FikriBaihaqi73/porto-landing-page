@@ -37,14 +37,16 @@
 
             <div class="mb-6">
                 <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Project Image</label>
+
                 @if($portfolio->image)
-                    <div class="mb-3">
-                        <img src="{{ asset('storage/' . $portfolio->image) }}" alt="{{ $portfolio->title }}" class="h-32 w-48 object-cover rounded-lg">
-                        <p class="mt-1 text-sm text-gray-500">Current image</p>
-                    </div>
+                <div class="mb-3">
+                    <img src="{{ $portfolio->image }}" alt="{{ $portfolio->title }}" class="h-32 w-48 object-cover rounded-lg">
+                    <p class="mt-1 text-sm text-gray-500">Current image</p>
+                </div>
                 @endif
+
                 <input type="file" name="image" id="image" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                <p class="mt-1 text-sm text-gray-500">Leave empty to keep current image. Maximum size: 2MB.</p>
+                <p class="mt-1 text-sm text-gray-500">Upload a new image (JPG, PNG, GIF up to 2MB) or leave empty to keep current image</p>
                 @error('image')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

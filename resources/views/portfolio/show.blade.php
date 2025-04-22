@@ -19,7 +19,7 @@
             <!-- Project image -->
             @if($portfolio->image)
                 <div class="w-full h-96 overflow-hidden">
-                    <img src="{{ asset('storage/' . $portfolio->image) }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover object-center">
+                    <img src="{{ $portfolio->image }}" alt="{{ $portfolio->title }}" class="w-full h-full object-cover object-center">
                 </div>
             @endif
 

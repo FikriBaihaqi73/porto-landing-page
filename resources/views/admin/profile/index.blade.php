@@ -19,10 +19,10 @@
         <div class="flex flex-col md:flex-row">
             <div class="md:w-1/3 mb-6 md:mb-0">
                 @if($profile->photo)
-                <img src="{{ asset('storage/' . $profile->photo) }}" alt="Profile Photo" class="rounded-lg w-full max-w-xs mx-auto">
+                <img src="{{ $profile->photo }}" alt="Profile Photo" class="rounded-lg w-full max-w-xs mx-auto shadow-md">
                 @else
                 <div class="bg-gray-200 rounded-lg w-full max-w-xs h-64 mx-auto flex items-center justify-center">
-                    <i class="fas fa-user text-gray-400 text-5xl"></i>
+                    <i class="fas fa-user-circle text-gray-400 text-5xl"></i>
                 </div>
                 @endif
             </div>
@@ -34,6 +34,21 @@
                     <h4 class="text-sm font-medium text-gray-500 mb-1">Description</h4>
                     <p class="text-gray-700">{{ $profile->description }}</p>
                 </div>
+
+                <!-- Skills Section -->
+                @if($profile->skills && count($profile->skills) > 0)
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Skills</h4>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($profile->skills as $skill)
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                {{ $skill }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 @if($profile->cv_link)
                 <div class="mb-6">
                     <h4 class="text-sm font-medium text-gray-500 mb-1">CV Link</h4>

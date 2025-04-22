@@ -19,7 +19,7 @@
             <!-- Blog image -->
             @if($blog->image)
                 <div class="w-full h-96 overflow-hidden">
-                    <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="w-full h-full object-cover object-center">
+                    <img src="{{ $blog->image }}" alt="{{ $blog->title }}" class="w-full h-full object-cover object-center">
                 </div>
             @endif
 
@@ -29,11 +29,10 @@
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">
                         {{ $blog->created_at->format('F d, Y') }}
                     </div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $blog->title }}</h1>
-                </div>
-
-                <div class="prose prose-indigo max-w-none dark:prose-invert" data-aos="fade-up" data-aos-delay="100">
-                    {!! $blog->content !!}
+                    <h1 class="text-3xl font-bold text-white mb-4">{{ $blog->title }}</h1>
+                    <div class="prose prose-lg max-w-none text-white space-y-6">
+                        {!! nl2br(e($blog->content)) !!}
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,7 +46,7 @@
                 @foreach($relatedBlogs as $relatedBlog)
                     <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-lg">
                         @if($relatedBlog->image)
-                            <img src="{{ asset('storage/' . $relatedBlog->image) }}" alt="{{ $relatedBlog->title }}" class="w-full h-48 object-cover">
+                            <img src="{{ $relatedBlog->image }}" alt="{{ $relatedBlog->title }}" class="w-full h-48 object-cover">
                         @else
                             <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                                 <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

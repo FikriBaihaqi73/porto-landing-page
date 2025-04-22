@@ -19,6 +19,16 @@ class Profile extends Model
         'description',
         'cv_link',
         'user_id',
+        'skills', // Added skills to fillable
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'skills' => 'array', // Cast skills to array
     ];
 
     /**
